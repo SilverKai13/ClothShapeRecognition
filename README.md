@@ -1,11 +1,12 @@
 # ClothShapeRecognition
 
-A walk through seven progressively bigger fully-connected networks on
-Fashion-MNIST (60,000 training images, 10,000 test images, 28x28
-grayscale clothing items across 10 classes), each change motivated by
-the previous model's result: add a hidden layer, add dropout, add
-neurons, switch optimizer, add a second hidden layer, shrink the batch
-size.
+A walk through seven versions of a small neural network, each one tweaked
+based on how the last one performed. The task is Fashion-MNIST: 70,000
+small grayscale images of clothing (shirts, shoes, bags, and so on) sorted
+into 10 categories, 60,000 for training and 10,000 held back for testing.
+Each version changes one thing — adding a layer, adding some randomness to
+prevent overfitting, adding more neurons, switching the training method, and
+so on — so you can see what actually moved the needle.
 
 ## Results
 
@@ -19,27 +20,31 @@ size.
 | **model_5: 2x256-unit hidden, ADAM** | **89.3%** |
 | model_6: 256-unit hidden, SGD, batch=32 | 88.5% |
 
-Switching the optimizer from SGD to ADAM (model_3 -> model_4) is the
-single biggest jump here, +2.3 points, bigger than adding layers,
-dropout, or extra neurons managed on their own. That's a bigger effect
-than any of the architecture changes, which is worth remembering before
-reaching for "add another layer" as the first move.
+("SGD" and "ADAM" are two different methods for how the network updates
+itself during training.)
 
-Worth calling out directly: model_5 (two hidden layers) only just edges
-out model_4 (one hidden layer) — 89.3% vs 89.2%. That gap is small
-enough to be noise rather than a real effect of the second layer; a
-single run isn't enough to say confidently whether the extra layer
-helps, hurts, or does nothing here.
+Switching from SGD to ADAM (model_3 to model_4) is the single biggest jump
+here — 2.3 percentage points, bigger than adding layers, adding randomness,
+or adding more neurons managed on their own. That's worth remembering
+before reaching for "add another layer" as the default first move.
+
+Worth calling out directly: model_5, with two hidden layers, only barely
+beats model_4, which has one — 89.3% versus 89.2%. That gap is small enough
+to just be noise rather than a real effect of the extra layer. A single
+training run isn't enough to say with any confidence whether the second
+layer actually helps, hurts, or does nothing at all.
 
 ## What I'd do differently
 
-- Average over a few seeds before claiming any model beats another by
-  less than half a point — a gap this size on a single run isn't a
-  result you can hang a conclusion on.
-- A small CNN would beat every model in this comparison by a wide
-  margin on Fashion-MNIST; this notebook's real value is in comparing
-  fully-connected variants against each other, not in reaching for a
-  competitive accuracy number.
+- Run each model several times with different random starting points
+  before claiming one beats another by less than half a point — a gap
+  this small from a single run isn't something you can draw a real
+  conclusion from.
+- A small convolutional network (a model type built specifically for
+  images) would beat every model in this comparison by a wide margin on
+  Fashion-MNIST. This notebook's real value is comparing simpler
+  fully-connected models against each other, not chasing the best
+  possible accuracy.
 
 ## Running it
 
@@ -48,5 +53,5 @@ pip install -r requirements.txt
 jupyter notebook FashionMNIST.ipynb
 ```
 
-No GPU required. CPU training all seven models takes several minutes.
-Fashion-MNIST downloads automatically via `keras.datasets.fashion_mnist`.
+No GPU required. Training all seven models on a normal computer takes a
+few minutes. The Fashion-MNIST dataset downloads automatically.
